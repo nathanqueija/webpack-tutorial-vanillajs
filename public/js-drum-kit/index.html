@@ -81,7 +81,8 @@
         key.classList.add('playing');
     }
 
-    function removeTranstion(e){
+    function removeTransition(e){
+
         //Pegando somente uma transição porque acontecem várias, nesse caso a de transform: scale
         if(e.propertyName !== 'transform') return;
 

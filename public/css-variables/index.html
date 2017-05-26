@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scoped CSS Variables and JS</title>
+</head>
+<body>
+  <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
+
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+
+    <label for="blur">Blur:</label>
+      <!-- No caso dos objetos que possuem classe com sufixo como px estaou adicionando um data-sizing pra saber que tem sufixo -->
+    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+
+    <label for="base">Base Color</label>
+    <input id="base" type="color" name="base" value="#ffc600">
+  </div>
+
+  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
+
+  <style>
+        /* CSS variables para serem alteradas via JS, todos os objetos que referenciam essas variáveis serão automaticamente alterados*/
+        /* root aqui está adicionando as variáveis no root do html */
+    :root {
+      --base: #fcc600;
+      --spacing: 20px;
+      --blur: 0px;
+
+    }
+
+    img {
+      padding: var(--spacing);
+        background: var(--base);
+        filter: blur(var(--blur));
+    }
+
+    .hl{
+        color: var(--base);
+    }
+
+    /*
+      misc styles, nothing to do with CSS variables
+    */
+
+    body {
+      text-align: center;
+      background: #193549;
+      color: white;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 50px;
+    }
+
+    .controls {
+      margin-bottom: 50px;
+    }
+
+    input {
+      width:100px;
+    }
+  </style>
+
+  <script>
+
+      //Selecionando todos os inputs da página, o retorno dessa variável é do tipo NodeList,
+      //isos significa que não teremos os métodos de array do ES6 como map, reduce, etc...
+      //Ás vezes será necessário converter o NodeList para array, mas nesse caso não
+      //Vou usar o método forEach mesmo que já vem por padrão no prototype do NodeList
+      const inputs = document.querySelectorAll('.controls input');
+
+      function handleUpdate() {
+          //o this aqui corresponde a quem disparou essa função, no caso o input
+
+          //Verificando se o input tem o data-sizing
+          //dataset retorna um objeto com todos os campos data-* que adicionamos em um elemento
+          //Verificando se o input atual tem o sizing attritbute (data-sizing), se não retorna vazio
+          const suffix = this.dataset.sizing || '';
+
+          //Pegando a variável CDD de acordo com o parâmetro name do campo que corresponde ao nome da varável
+          //e setando para o valor do campo e o sufixo
+          document.documentElement.style.setProperty(`--${this.name}`, this.value+suffix);
+
+
+
+      }
+
+      //adicionando os listeners em cada input
+      inputs.forEach( input => input.addEventListener('change', handleUpdate));
+
+      //Poderia criar uma flag aqui pra somente adicionar esse evento caso o user tenha clicado no input antes
+      //mas vou deixar assim pra ficar mais simples
+      inputs.forEach( input => input.addEventListener('mousemove', handleUpdate));
+
+  </script>
+
+</body>
+</html>
